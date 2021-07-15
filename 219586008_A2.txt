@@ -1,0 +1,574 @@
+CREATE DATABASE a4;
+USE a4;
+
+CREATE TABLE Nationality
+	(
+		NationalityID integer,
+		Nationality VARCHAR(30) UNIQUE,
+		CONSTRAINT PK_NA PRIMARY KEY (NationalityID)
+	);
+    
+CREATE TABLE Accom
+	(
+		AccomID integer,
+		Accom VARCHAR(30) UNIQUE,
+		CONSTRAINT PK_AC PRIMARY KEY (AccomID)
+	);
+    
+CREATE TABLE Positions
+	(
+		PositionID integer,
+		Position varchar(30) UNIQUE,
+		CONSTRAINT PK_PO PRIMARY KEY (PositionID)
+	);
+    
+CREATE TABLE Department
+	(
+		DepartmentID integer,
+		Department varchar(30) UNIQUE,
+		CONSTRAINT PK_DE PRIMARY KEY (DepartmentID)
+	);
+    
+CREATE TABLE Method
+	(
+		MethodID integer,
+		Method varchar(30) UNIQUE,
+		CONSTRAINT PK_ME PRIMARY KEY (MethodID)
+	);
+    
+CREATE TABLE Conditions
+	(
+		ConditionID integer,
+		Conditions varchar(30) unique,
+		CONSTRAINT PK_CO PRIMARY KEY (ConditionID)
+	);
+    
+CREATE TABLE Email
+	(
+		EmailID integer,
+		email VARCHAR(30),
+        CONSTRAINT PK_EM PRIMARY KEY (emailID)
+	);
+    
+CREATE TABLE Phone
+	(
+		PhoneID integer,
+		phone integer(30),
+        CONSTRAINT PK_PH PRIMARY KEY (phoneID)
+	);
+    
+CREATE TABLE StudyLevel
+	(
+		StudyLevelID integer,
+		StudyLevel VARCHAR(30) UNIQUE,
+        CONSTRAINT PK_SL PRIMARY KEY (studylevelID)
+	);
+    
+CREATE TABLE Gender
+	(
+		GenderID integer,
+		Gender VARCHAR(30) UNIQUE,
+        CONSTRAINT PK_GN PRIMARY KEY (genderID)
+	);
+    
+CREATE TABLE School
+	(
+		SchoolID integer,
+		School VARCHAR(30),
+        CONSTRAINT PK_SH PRIMARY KEY (schoolID)
+	);
+    
+CREATE TABLE City
+	(
+		CityID integer,
+		City VARCHAR(30) UNIQUE,
+        CONSTRAINT PK_CT PRIMARY KEY (cityID)
+	);
+    
+CREATE TABLE Status
+	(
+		StatusID integer,
+		Status VARCHAR(30) UNIQUE,
+        CONSTRAINT PK_ST PRIMARY KEY (statusID)
+	);
+    
+CREATE TABLE Program
+	(
+		ProgramID integer,
+		Program VARCHAR(30),
+        Year Year,
+        CONSTRAINT PK_PM PRIMARY KEY (ProgramID)
+	);
+    
+CREATE TABLE Address
+	(
+		AddressID integer,
+        Street VARCHAR(30),
+        CityID integer,
+        Postcode integer, 
+        CONSTRAINT PK_AD PRIMARY KEY (addressID),
+		CONSTRAINT FK1_AD FOREIGN KEY (CityID) REFERENCES city(cityID)
+	);
+    
+CREATE TABLE Staff
+	(
+		StaffID integer,
+		FirstName Varchar(30),
+		LastName Varchar(30),
+        PositionID integer,
+        DepartmentID integer,
+        PhoneID integer,
+        EmailID integer,
+        OfficeNumber integer,
+        GenderID integer,
+        DOB DATE,
+        CONSTRAINT PK_SF PRIMARY KEY (staffID),
+		CONSTRAINT FK1_SF FOREIGN KEY (positionID) REFERENCES positions(positionID),
+        CONSTRAINT FK2_SF FOREIGN KEY (departmentID) REFERENCES department(departmentID),
+		CONSTRAINT FK3_SF FOREIGN KEY (emailID) REFERENCES email(emailID),
+        CONSTRAINT FK4_SF FOREIGN KEY (phoneID) REFERENCES phone(phoneID),
+        CONSTRAINT FK5_SF FOREIGN KEY (genderID) REFERENCES gender(genderID)
+	);
+
+CREATE TABLE Student
+	(
+		StudentID integer,
+        FirstName Varchar(30),
+		LastName Varchar(30),
+        AddressID integer,
+        NationalityID Integer,
+        Age integer, 
+        EmailID integer,
+        PhoneID integer,
+        DOB Date,
+        GenderID integer,
+        placeid integer,
+        StudyLevelID integer,
+        StatusID integer, 
+        MentorID integer,
+        ProgramID integer, 
+        AdviserID integer,
+        Needs VARCHAR(100),
+        CONSTRAINT PK_ST PRIMARY KEY (studentID),
+		CONSTRAINT FK1_ST FOREIGN KEY (addressID) REFERENCES address(addressID),
+        CONSTRAINT FK3_ST FOREIGN KEY (nationalityID) REFERENCES nationality(nationalityID),
+		CONSTRAINT FK4_ST FOREIGN KEY (emailID) REFERENCES email(emailID),
+        CONSTRAINT FK5_ST FOREIGN KEY (phoneID) REFERENCES phone(phoneID),
+		CONSTRAINT FK6_ST FOREIGN KEY (genderID) REFERENCES gender(genderID),
+        CONSTRAINT FK7_ST FOREIGN KEY (studylevelID) REFERENCES studylevel(studylevelID),
+        CONSTRAINT FK8_ST FOREIGN KEY (statusID) REFERENCES status(statusID),
+		CONSTRAINT FK10_ST FOREIGN KEY (programID) REFERENCES program(programID),
+        CONSTRAINT FK11_ST FOREIGN KEY (adviserID) REFERENCES staff(staffID)
+	);
+    
+CREATE TABLE Lease
+	(
+		LeaseID integer,
+        Duration_Semesters integer NOT NULL,
+        StudentID integer,
+		PlaceID integer,
+        roomid integer,
+        AddressID integer,
+        DateEntry Date NOT NULL,
+        DateExit Date,
+        CONSTRAINT PK_LE PRIMARY KEY (LeaseID),
+		CONSTRAINT FK1_LE FOREIGN KEY (studentID) REFERENCES student(studentID),
+        CONSTRAINT FK3_LE FOREIGN KEY (addressID) REFERENCES address(addressID),
+        CHECK (Duration_semesters<=3)
+	);
+    
+CREATE TABLE Payment
+	(
+		PaymentID integer,
+        InvoiceNumber integer not null,
+        LeaseID integer,
+        Semester integer not null,
+        Amount float,
+        StudentID integer,
+		DatePaid Date,
+        MethodID integer,
+        Reminder1 Date,
+        Reminder2 Date,
+        CONSTRAINT PK_PY PRIMARY KEY (PaymentID),
+		CONSTRAINT FK1_PY FOREIGN KEY (studentID) REFERENCES student(studentID),
+        CONSTRAINT FK2_PY FOREIGN KEY (leaseID) REFERENCES Lease(leaseID),
+        CONSTRAINT FK3_PY FOREIGN KEY (methodID) REFERENCES method(methodID)
+	);
+    
+CREATE TABLE Inspection
+	(
+		InspectionID integer,
+        staffID integer,
+        roomnumber integer,
+        ConditionID integer,
+		Comments varchar(30),
+		CONSTRAINT PK_IN PRIMARY KEY (InspectionID),
+		CONSTRAINT FK1_IS FOREIGN KEY (staffID) REFERENCES Staff(staffID),
+        CONSTRAINT FK2_IS FOREIGN KEY (ConditionID) REFERENCES Conditions(conditionID)
+	);
+
+CREATE TABLE Hall
+	(
+		HallID integer,
+        Hallname varchar(30),
+        StaffID integer,
+        addressid integer,
+        RoomNumber integer not null,
+		PlaceID integer,
+		monthlyrent float not null,
+        CONSTRAINT PK_HL PRIMARY KEY (HallID),
+        CONSTRAINT FK3_HL FOREIGN KEY (staffID) REFERENCES staff(staffID)
+	);
+    
+CREATE TABLE Unit
+	(
+		ApartmentID integer,
+        StaffID integer,
+        addressID integer,
+        UnitNumber integer not null,
+        RoomNumber integer not null,
+		PlaceID integer,
+        bednumber integer, 
+		monthlyrent float not null,
+        CONSTRAINT PK_UT PRIMARY KEY (ApartmentID)
+	);
+    
+CREATE TABLE Dorm
+	(
+		DormID integer,
+        StaffID integer,
+        AddressID integer,
+        ApartmentNumber integer not null,
+        RoomNumber integer not null,
+        BedNumber integer not null,
+		PlaceID integer,
+		monthlyrent float not null,
+        CONSTRAINT PK_DM PRIMARY KEY (DormID)
+	);
+    
+CREATE TABLE Relationship 
+	(
+		RelationshipID integer,
+		Relationship varchar(30) not null,
+        CONSTRAINT PK_RE PRIMARY KEY (relationshipID)
+	);
+    
+CREATE TABLE Guardian 
+	(
+		GuardianID integer, 
+        StudentID integer, 
+        RelationshipID integer,
+        FirstName varchar(30),
+        LastName varchar(30),
+		AddressID integer,
+        PhoneID integer,
+		CONSTRAINT PK_SF PRIMARY KEY (GuardianID),
+        CONSTRAINT FK1_GD FOREIGN KEY (studentID) REFERENCES student(studentID),
+		CONSTRAINT FK2_GD FOREIGN KEY (addressID) REFERENCES address(addressID),
+        CONSTRAINT FK3_GD FOREIGN KEY (phoneID) REFERENCES phone(phoneID)
+	);
+    
+CREATE TABLE Log
+	(
+		LogID integer, 
+        StudentID integer, 
+        StaffID integer, 
+        LogDateTime datetime,
+		CONSTRAINT PK_LG PRIMARY KEY (LogID),
+        CONSTRAINT FK1_LG FOREIGN KEY (studentID) REFERENCES Student(studentID),
+		CONSTRAINT FK2_LG FOREIGN KEY (staffID) REFERENCES Staff(staffID)
+	);
+
+Insert into Nationality(NationalityID,Nationality) values (1,"Chinese");
+Insert into Nationality(NationalityID,Nationality) values (2,"Indian");
+Insert into Nationality(NationalityID,Nationality) values (3,"German");
+Insert into Nationality(NationalityID,Nationality) values (4,"Austrian");
+Insert into Nationality(NationalityID,Nationality) values (5,"Australian");
+Insert into Nationality(NationalityID,Nationality) values (6,"Greek");
+
+Insert into Positions(PositionID,Position) values (1,"Manager");
+Insert into Positions(PositionID,Position) values (2,"Cleaner");
+Insert into Positions(PositionID,Position) values (3,"Adviser");
+Insert into Positions(PositionID,Position) values (4,"Director");
+Insert into Positions(PositionID,Position) values (5,"Teacher");
+Insert into Positions(PositionID,Position) values (6,"Professor");
+
+Insert into Department(DepartmentID,Department) values (1,"Art");
+Insert into Department(DepartmentID,Department) values (2,"Business");
+Insert into Department(DepartmentID,Department) values (3,"Geography");
+Insert into Department(DepartmentID,Department) values (4,"Science");
+Insert into Department(DepartmentID,Department) values (5,"Chemistry");
+Insert into Department(DepartmentID,Department) values (6,"Tech");
+
+Insert into Method(MethodID,Method) values (1,"Cash");
+Insert into Method(MethodID,Method) values (2,"Cheque");
+Insert into Method(MethodID,Method) values (3,"Debit");
+Insert into Method(MethodID,Method) values (4,"Paypal");
+
+Insert into Conditions(conditionID,conditions) values (1,"Satisfactory");
+Insert into Conditions(conditionID,conditions) values (2,"Unsatisfactory");
+
+Insert into email(emailID,email) values (1,"a@gmail.com");
+Insert into email(emailID,email) values (2,"b@gmail.com");
+Insert into email(emailID,email) values (3,"c@gmail.com");
+Insert into email(emailID,email) values (4,"d@gmail.com");
+Insert into email(emailID,email) values (5,"e@gmail.com");
+Insert into email(emailID,email) values (6,"f@gmail.com");
+Insert into email(emailID,email) values (7,"g@gmail.com");
+Insert into email(emailID,email) values (8,"h@gmail.com");
+Insert into email(emailID,email) values (9,"i@gmail.com");
+Insert into email(emailID,email) values (10,"j@gmail.com");
+Insert into email(emailID,email) values (11,"k@gmail.com");
+Insert into email(emailID,email) values (12,"l@gmail.com");
+Insert into email(emailID,email) values (13,"m@gmail.com");
+Insert into email(emailID,email) values (14,"n@gmail.com");
+Insert into email(emailID,email) values (15,"o@gmail.com");
+Insert into email(emailID,email) values (16,"p@gmail.com");
+Insert into email(emailID,email) values (17,"q@gmail.com");
+Insert into email(emailID,email) values (18,"r@gmail.com");
+
+insert into phone(phoneID,phone) values (1,90989090);
+insert into phone(phoneID,phone) values (2,87676878);
+insert into phone(phoneID,phone) values (3,46746758);
+insert into phone(phoneID,phone) values (4,21526782);
+insert into phone(phoneID,phone) values (5,87468363);
+insert into phone(phoneID,phone) values (6,73563746);
+insert into phone(phoneID,phone) values (7,63654783);
+insert into phone(phoneID,phone) values (8,66546727);
+insert into phone(phoneID,phone) values (9,90455673);
+insert into phone(phoneID,phone) values (10,90344764);
+insert into phone(phoneID,phone) values (11,97653635);
+insert into phone(phoneID,phone) values (12,90564738);
+insert into phone(phoneID,phone) values (13,65654783);
+insert into phone(phoneID,phone) values (14,66888907);
+insert into phone(phoneID,phone) values (15,90645474);
+insert into phone(phoneID,phone) values (16,90657573);
+insert into phone(phoneID,phone) values (17,99975657);
+insert into phone(phoneID,phone) values (18,90786570);
+insert into phone(phoneID,phone) values (19,90564738);
+insert into phone(phoneID,phone) values (20,65654783);
+insert into phone(phoneID,phone) values (21,66888907);
+insert into phone(phoneID,phone) values (22,90645474);
+insert into phone(phoneID,phone) values (23,90657573);
+insert into phone(phoneID,phone) values (24,99975657);
+
+insert into studylevel(studylevelid,studylevel) values (1,"Undergrad");
+insert into studylevel(studylevelid,studylevel) values (2,"Graduate");
+insert into studylevel(studylevelid,studylevel) values (3,"PHD");
+
+Insert into gender(genderid,gender) values (1,"Male");
+Insert into gender(genderid,gender) values (2,"Female");
+
+Insert into school(schoolid,school) values (1,"SIT");
+Insert into school(schoolid,school) values (2,"BUS");
+Insert into school(schoolid,school) values (3,"ART");
+Insert into school(schoolid,school) values (4,"POL");
+Insert into school(schoolid,school) values (5,"MED");
+Insert into school(schoolid,school) values (6,"ARC");
+
+insert into city(cityid,city) values (1,"Melbourne");
+insert into city(cityid,city) values (2,"Sydney");
+insert into city(cityid,city) values (3,"Canberra");
+insert into city(cityid,city) values (4,"Perth");
+insert into city(cityid,city) values (5,"Brisbane");
+insert into city(cityid,city) values (6,"Adelaide");
+
+Insert into status(statusID,status) values (1,"Placed");
+Insert into status(statusID,status) values (2,"Unplaced");
+
+Insert into program(programID,program,year) values (1,"Art",2021);
+Insert into program(programID,program,year) values (2,"Business",2021);
+Insert into program(programID,program,year) values (3,"Technology",2021);
+Insert into program(programID,program,year) values (4,"Chemistry",2021);
+Insert into program(programID,program,year) values (5,"Design",2021);
+Insert into program(programID,program,year) values (6,"History",2021);
+
+Insert into address(addressid,street,cityid,postcode) values (1,"36 River Street",1,3006);
+Insert into address(addressid,street,cityid,postcode) values (2,"32 Bridge Street",1,3003);
+Insert into address(addressid,street,cityid,postcode) values (3,"44 Boat Street",2,3006);
+Insert into address(addressid,street,cityid,postcode) values (4,"32 Car Street",2,3006);
+Insert into address(addressid,street,cityid,postcode) values (5,"12 Laner Street",3,3006);
+Insert into address(addressid,street,cityid,postcode) values (6,"16 Bird Street",3,3006);
+Insert into address(addressid,street,cityid,postcode) values (7,"55 Quack Street",4,3006);
+Insert into address(addressid,street,cityid,postcode) values (8,"66 Duck Street",4,3006);
+Insert into address(addressid,street,cityid,postcode) values (9,"3 Moat Street",5,3006);
+Insert into address(addressid,street,cityid,postcode) values (10,"8 Fort Street",5,3006);
+Insert into address(addressid,street,cityid,postcode) values (11,"66 Loard Street",6,3006);
+Insert into address(addressid,street,cityid,postcode) values (12,"56 Moa Street",6,3006);
+Insert into address(addressid,street,cityid,postcode) values (13,"44 Engine Street",1,3006);
+Insert into address(addressid,street,cityid,postcode) values (14,"33 Scent Street",1,3006);
+Insert into address(addressid,street,cityid,postcode) values (15,"36 Muck Street",2,3006);
+Insert into address(addressid,street,cityid,postcode) values (16,"45 Smell Street",2,3006);
+Insert into address(addressid,street,cityid,postcode) values (17,"72 Tall Street",3,3006);
+Insert into address(addressid,street,cityid,postcode) values (18,"22 Floor Street",3,3006);
+Insert into address(addressid,street,cityid,postcode) values (19,"21 Bend Street",4,3006);
+Insert into address(addressid,street,cityid,postcode) values (20,"38 Roam Street",4,3006);
+Insert into address(addressid,street,cityid,postcode) values (21,"98 Unknown Street",5,3006);
+Insert into address(addressid,street,cityid,postcode) values (22,"100 Ball Street",5,3006);
+Insert into address(addressid,street,cityid,postcode) values (23,"65 Max Street",6,3006);
+Insert into address(addressid,street,cityid,postcode) values (24,"56 Load Street",6,3006);
+Insert into address(addressid,street,cityid,postcode) values (25,"31 Sick Street",2,3006);
+Insert into address(addressid,street,cityid,postcode) values (26,"32 Remote Street",2,3006);
+Insert into address(addressid,street,cityid,postcode) values (27,"33 Bend Street",3,3006);
+Insert into address(addressid,street,cityid,postcode) values (28,"35 Sicken Street",3,3006);
+Insert into address(addressid,street,cityid,postcode) values (29,"38 Lotto Street",4,3006);
+Insert into address(addressid,street,cityid,postcode) values (30,"39 Mill Street",4,3006);
+Insert into address(addressid,street,cityid,postcode) values (31,"43 Bender Street",5,3006);
+Insert into address(addressid,street,cityid,postcode) values (32,"21 Drop Street",5,3006);
+Insert into address(addressid,street,cityid,postcode) values (33,"32 Muck Street",6,3006);
+Insert into address(addressid,street,cityid,postcode) values (34,"2 Light Street",6,3006);
+
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (1,"Sam","Deng",4,1,7,7,901,1,'1960/02/1');
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (2,"James","Zen",4,1,8,8,902,1,'1950/02/1');
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (3,"Micheal","French",4,1,9,9,903,1,'1955/02/1');
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (4,"Mitch","Macky",5,1,10,10,904,1,'1965/02/1');
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (5,"Maz","Tough",5,1,11,11,905,1,'1958/02/1');
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (6,"Jack","Mckay",6,1,12,12,906,1,'1945/02/1');
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (7,"Jane","Doe",6,1,13,13,907,2,'1988/02/1');
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (8,"Sam","Milk",1,1,14,14,908,2,'1965/02/1');
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (9,"Wendy","Donught",1,1,15,15,909,2,'1952/02/1');
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (10,"Lane","Maze",1,1,16,16,910,2,'1967/02/1');
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (11,"Missy","When",3,1,17,17,911,2,'1968/02/1');
+Insert into staff(staffid,firstname,lastname,positionid,departmentID,phoneID,EmailID,OfficeNumber,GenderID,DOB) values (12,"Misty","Water",3,1,18,18,912,2,'1970/02/1');
+
+Insert into student(studentid,firstname,lastname,addressID,nationalityID,age,emailID,phoneID,DOB,GenderID,placeid,Studylevelid,statusID,MentorID,ProgramID,AdviserID,needs) values (1,"Max","Smith",1,1,21,1,1,'2020/01/01',1,1,1,2,2,1,11,"n/a");
+Insert into student(studentid,firstname,lastname,addressID,nationalityID,age,emailID,phoneID,DOB,GenderID,placeid,Studylevelid,statusID,MentorID,ProgramID,AdviserID,needs) values (2,"James","Mann",1,1,22,2,2,'1999/01/01',1,2,2,1,3,2,11,"n/a");
+Insert into student(studentid,firstname,lastname,addressID,nationalityID,age,emailID,phoneID,DOB,GenderID,placeid,Studylevelid,statusID,MentorID,ProgramID,AdviserID,needs) values (3,"Sue","Ken",1,1,26,3,3,'1997/01/01',2,3,3,1,6,3,11,"n/a");
+Insert into student(studentid,firstname,lastname,addressID,nationalityID,age,emailID,phoneID,DOB,GenderID,placeid,Studylevelid,statusID,MentorID,ProgramID,AdviserID,needs) values (4,"Janette","Samson",1,1,21,4,4,'2000/01/01',2,4,1,2,5,4,12,"n/a");
+Insert into student(studentid,firstname,lastname,addressID,nationalityID,age,emailID,phoneID,DOB,GenderID,placeid,Studylevelid,statusID,MentorID,ProgramID,AdviserID,needs) values (5,"Jim","Jones",1,1,23,5,5,'1998/01/01',2,5,2,1,3,5,12,"n/a");
+Insert into student(studentid,firstname,lastname,addressID,nationalityID,age,emailID,phoneID,DOB,GenderID,placeid,Studylevelid,statusID,MentorID,ProgramID,AdviserID,needs) values (6,"Lady","Fair",1,1,28,6,6,'1993/01/01',1,6,3,1,6,6,12,"n/a");
+
+insert into lease(leaseID,duration_semesters,StudentID,placeID,roomid,addressID,dateentry,Dateexit) values (1,2,2,2,101,2,'2020/01/01',null);
+insert into lease(leaseID,duration_semesters,StudentID,placeID,roomid,addressID,dateentry,Dateexit) values (2,1,3,3,201,3,'2020/01/01',null);
+insert into lease(leaseID,duration_semesters,StudentID,placeID,roomid,addressID,dateentry,Dateexit) values (3,3,5,5,201,5,'2020/01/01',null);
+insert into lease(leaseID,duration_semesters,StudentID,placeID,roomid,addressID,dateentry,Dateexit) values (4,1,6,6,301,6,'2020/01/01',null);
+
+Insert into payment(paymentID,InvoiceNumber,LeaseID,semester,amount,studentID,datepaid,MethodID,Reminder1,Reminder2) values (1,1,1,1,30.00,2,'2021/01/10',2,null,null);
+Insert into payment(paymentID,InvoiceNumber,LeaseID,semester,amount,studentID,datepaid,MethodID,Reminder1,Reminder2) values (2,2,2,1,61.50,3,'2021/01/15',2,null,null);
+Insert into payment(paymentID,InvoiceNumber,LeaseID,semester,amount,studentID,datepaid,MethodID,Reminder1,Reminder2) values (3,3,3,1,61.50,5,'2021/01/21',1,null,null);
+Insert into payment(paymentID,InvoiceNumber,LeaseID,semester,amount,studentID,datepaid,MethodID,Reminder1,Reminder2) values (4,4,4,1,99.00,6,'2021/01/19',3,null,null);
+
+insert into inspection(InspectionID,StaffID,roomnumber,ConditionID,Comments) values (1,8,101,1,"Clean");
+insert into inspection(InspectionID,StaffID,roomnumber,ConditionID,Comments) values (2,8,102,1,"Clean");
+insert into inspection(InspectionID,StaffID,roomnumber,ConditionID,Comments) values (3,9,201,2,"Dirty");
+insert into inspection(InspectionID,StaffID,roomnumber,ConditionID,Comments) values (4,9,202,2,"Bad Smell");
+insert into inspection(InspectionID,StaffID,roomnumber,ConditionID,Comments) values (5,10,301,2,"Unclean");
+insert into inspection(InspectionID,StaffID,roomnumber,ConditionID,Comments) values (6,10,311,1,"Fine");
+
+Insert into Hall(HallID,hallname,StaffID,addressID,RoomNumber,PlaceID,monthlyrent) values (1,"Alpha",8,19,101,2,10.00);
+Insert into Hall(HallID,hallname,StaffID,addressID,RoomNumber,PlaceID,monthlyrent) values (2,"Alpha",8,19,102,null,11.00);
+Insert into Hall(HallID,hallname,StaffID,addressID,RoomNumber,PlaceID,monthlyrent) values (3,"Alpha",8,19,103,null,15.00);
+Insert into Hall(HallID,hallname,StaffID,addressID,RoomNumber,PlaceID,monthlyrent) values (4,"Beta",8,20,111,null,12.00);
+Insert into Hall(HallID,hallname,StaffID,addressID,RoomNumber,PlaceID,monthlyrent) values (5,"Beta",8,20,112,null,14.00);
+Insert into Hall(HallID,hallname,StaffID,addressID,RoomNumber,PlaceID,monthlyrent) values (6,"Beta",8,20,113,null,19.00);
+
+Insert into Unit(ApartmentID,StaffID,addressID,UnitNumber,RoomNumber,PlaceID,bednumber,monthlyrent) values (1,9,21,1,201,3,1,20.50);
+Insert into Unit(ApartmentID,StaffID,addressID,UnitNumber,RoomNumber,PlaceID,bednumber,monthlyrent) values (2,9,21,1,201,5,2,20.50);
+Insert into Unit(ApartmentID,StaffID,addressID,UnitNumber,RoomNumber,PlaceID,bednumber,monthlyrent) values (3,9,21,1,201,null,3,20.50);
+Insert into Unit(ApartmentID,StaffID,addressID,UnitNumber,RoomNumber,PlaceID,bednumber,monthlyrent) values (4,9,21,1,201,null,4,20.50);
+Insert into Unit(ApartmentID,StaffID,addressID,UnitNumber,RoomNumber,PlaceID,bednumber,monthlyrent) values (5,9,21,1,201,null,5,20.50);
+Insert into Unit(ApartmentID,StaffID,addressID,UnitNumber,RoomNumber,PlaceID,bednumber,monthlyrent) values (6,9,22,2,202,null,1,30.50);
+
+Insert into Dorm(DormID,StaffID,addressID,ApartmentNumber,RoomNumber,BedNumber,PlaceID,monthlyrent) values (1,10,23,1,301,1,6,33.00);
+Insert into Dorm(DormID,StaffID,addressID,ApartmentNumber,RoomNumber,BedNumber,PlaceID,monthlyrent) values (2,10,23,1,301,2,null,33.00);
+Insert into Dorm(DormID,StaffID,addressID,ApartmentNumber,RoomNumber,BedNumber,PlaceID,monthlyrent) values (3,10,23,1,301,3,null,33.00);
+Insert into Dorm(DormID,StaffID,addressID,ApartmentNumber,RoomNumber,BedNumber,PlaceID,monthlyrent) values (4,10,24,2,311,1,null,32.00);
+Insert into Dorm(DormID,StaffID,addressID,ApartmentNumber,RoomNumber,BedNumber,PlaceID,monthlyrent) values (5,10,24,2,311,2,null,32.00);
+Insert into Dorm(DormID,StaffID,addressID,ApartmentNumber,RoomNumber,BedNumber,PlaceID,monthlyrent) values (6,10,24,2,311,3,null,32.00);
+
+Insert into Relationship(RelationshipID,Relationship) values (1,"Mother");
+Insert into Relationship(RelationshipID,Relationship) values (2,"Father");
+Insert into Relationship(RelationshipID,Relationship) values (3,"GrandFather");
+Insert into Relationship(RelationshipID,Relationship) values (4,"GrandMother");
+Insert into Relationship(RelationshipID,Relationship) values (5,"LegalGuardian");
+Insert into Relationship(RelationshipID,Relationship) values (6,"Aunt");
+
+Insert into Guardian(GuardianID,StudentID,RelationshipID,FirstName,LastName,AddressID,PhoneID) values (1,1,1,"Mark","Smith",25,19);
+Insert into Guardian(GuardianID,StudentID,RelationshipID,FirstName,LastName,AddressID,PhoneID) values (2,1,2,"Mary","Smith",25,20);
+Insert into Guardian(GuardianID,StudentID,RelationshipID,FirstName,LastName,AddressID,PhoneID) values (3,2,3,"John","Mann",26,21);
+Insert into Guardian(GuardianID,StudentID,RelationshipID,FirstName,LastName,AddressID,PhoneID) values (4,2,4,"Jane","Svann",26,22);
+Insert into Guardian(GuardianID,StudentID,RelationshipID,FirstName,LastName,AddressID,PhoneID) values (5,3,5,"James","Ken",27,23);
+Insert into Guardian(GuardianID,StudentID,RelationshipID,FirstName,LastName,AddressID,PhoneID) values (6,4,5,"Rebecca","Samson",28,24);
+
+Insert into Log(logid,studentid,staffid,LogDateTime) values (1,1,null,'2020-01-05 06:30:00');
+Insert into Log(logid,studentid,staffid,LogDateTime) values (2,4,null,'2020-01-07 10:30:00');
+Insert into Log(logid,studentid,staffid,LogDateTime) values (3,null,8,'2020-01-08 12:30:00');
+Insert into Log(logid,studentid,staffid,LogDateTime) values (4,null,10,'2020-01-10 13:30:00');
+
+-------------------------------
+
+/*(A)*/
+SELECT t.staffid,t.firstname,t.lastname,p.phone,o.position from staff as t
+inner join positions as o on t.departmentid
+right join phone as p on t.phoneid
+where t.positionid = 1 and t.phoneID=p.phoneid and o.position="manager";
+
+/*(B)*/
+SELECT l.studentid,s.firstname,s.lastname,l.leaseid,l.duration_semesters,l.placeid FROM lease as l
+inner join student as s on l.studentID
+Where s.studentid = l.studentID;
+
+/*(C)*/
+SELECT * FROM lease
+WHERE lease.duration_semesters = 3;
+
+/*(D)*/
+SELECT l.studentid,l.placeid,sum((h.monthlyrent*4)*l.duration_semesters) as "Total Amount to be Paid" from lease as l
+right join hall as h on l.placeid where l.placeid = h.placeid AND h.roomnumber = l.roomid;
+
+/*(E)*/
+select p.paymentid,p.invoicenumber,p.leaseid,p.amount,p.datepaid,s.studentid,s.firstname,s.lastname from payment as p
+inner join student as s on p.studentid = s.studentid
+where p.Datepaid <'2021/1/20';
+
+/*(F)*/
+SELECT * FROM inspection 
+WHERE inspection.conditionID = 2; 
+
+/*(G)*/
+SELECT h.hallname,h.placeid,h.roomnumber,s.firstname,s.lastname,s.studentid from hall as h
+right join student as s on h.placeid where h.PlaceID = s.placeID and h.hallname = "alpha";
+
+/*(H)*/
+Select s.studentid,s.firstname,s.lastname,s.statusid,t.status from student as s 
+right join status as t on s.statusid = t.statusid
+where s.statusid = 2;
+
+/*(I)*/
+SELECT studylevel.studylevel AS "Study Level", Count(s.studentID) AS "Count" FROM Student AS S
+Right JOIN studylevel on s.studylevelID WHERE studylevel.studylevelID = s.studylevelID
+GROUP BY S.studylevelID;
+
+/*(J)*/
+Select s.studentid,s.firstname,s.lastname from student as s
+where s.studentID NOT IN
+(SELECT g.studentid from guardian as g);
+
+/*(K)*/
+Select s.studentid,t.staffid,t.firstname,t.lastname,p.phone from student as s
+inner join staff as t on s.adviserid = t.staffid
+right join phone as p on t.staffid
+where s.studentid = 1
+group by s.studentid;
+
+/*(L)*/
+select h.hallname,max(monthlyrent) AS "MAX Monthly Rent",min(monthlyrent) AS "MIN Monthly Rent",AVG(monthlyrent)AS "MIN Monthly Rent" from hall as h
+group by h.hallname;
+
+/*(M)*/
+select h.hallname,count(roomnumber) from hall as h
+group by h.hallname;
+
+/*(N)*/
+SELECT s.staffid,s.firstname,s.lastname,s.dob
+from staff as s
+where s.DOB>='1961/02/01' AND s.positionid=1;
+
+/*(O)*/
+SELECT s.studentid,s.firstname,s.lastname,s.mentorid,l.roomid from student as s
+inner join lease as l on s.placeid WHERE l.placeid = s.placeid and l.roomid between 100 AND 300;
+
+
+
+
+

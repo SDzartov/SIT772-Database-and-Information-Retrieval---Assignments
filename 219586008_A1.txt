@@ -1,0 +1,183 @@
+CREATE DATABASE a3;
+USE a3;
+    
+CREATE TABLE Customer
+	(
+		CustomerID integer,
+		CustomerName varchar(30),
+        CustomerAnnualIncome float NOT NULL,
+        CONSTRAINT PK_C PRIMARY KEY (CustomerID)
+	);
+    
+CREATE TABLE Staff
+	(
+		StaffID integer,
+        StaffName varchar(30),
+        CONSTRAINT PK_S PRIMARY KEY (StaffID)
+	); 
+
+CREATE TABLE PropertyStatus
+	(
+        PropertyStatusID integer,
+        PropertyStatus varchar(30) NOT NULL,
+        CONSTRAINT PK_PS PRIMARY KEY (PropertyStatusID)
+	); 
+
+CREATE TABLE State
+	(
+        StateID integer,
+        State varchar(30) NOT NULL,
+        CONSTRAINT PK_ST PRIMARY KEY (StateID)
+	); 
+    
+CREATE TABLE Suburb
+	(
+        SuburbID integer,
+        Suburb varchar(30) NOT NULL,
+        CONSTRAINT PK_ST PRIMARY KEY (SuburbID)
+	); 
+
+CREATE TABLE Property
+	(
+		PropertyID integer,
+        Address varchar(30),
+        SuburbID integer,
+        StateID integer,
+		Value float,
+        AverageValue float, 
+        PropertyStatusID integer,
+        CONSTRAINT PK_P PRIMARY KEY (PropertyID),
+		CONSTRAINT FK1_P FOREIGN KEY (PropertyStatusID) REFERENCES PropertyStatus(PropertyStatusID),
+        CONSTRAINT FK2_P FOREIGN KEY (StateID) REFERENCES State(StateID),
+        CHECK (StateID<9)
+	); 
+
+CREATE TABLE SavingsAccount
+	(
+		SavingsAccountID integer,
+        CustomerID Integer,
+        AccountAmount float NOT NULL,
+        CONSTRAINT PK_A PRIMARY KEY (SavingsAccountID),
+		CONSTRAINT FK1_A FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+        CHECK (AccountAmount>0)
+	); 
+    
+CREATE TABLE HomeLoans
+	(
+		HomeLoanID Integer,
+        HomeLoanTypeID integer,
+		CustomerID integer NOT NULL,
+        Customer2ID integer,
+		SavingsAccountID integer NOT NULL,
+        SavingsAccount2ID integer,
+        SavingsAmount float, 
+        SavingsAmount2 float, 
+        Annualincome float, 
+        Annualincome2 float, 
+        PropertyID integer UNIQUE,
+        PropertyValue float,
+        HomeLoanLimit float,
+		StaffID integer NOT NULL,
+        CONSTRAINT PK_HL PRIMARY KEY (HomeLoanID),
+		CONSTRAINT FK1_HL FOREIGN KEY (CustomerID) REFERENCES customer(CustomerID),
+        CONSTRAINT FK2_HL FOREIGN KEY (SavingsAccountID) REFERENCES SavingsAccount(SavingsAccountID),
+        CONSTRAINT FK5_HL FOREIGN KEY (Customer2ID) REFERENCES customer(CustomerID),
+        CONSTRAINT FK6_HL FOREIGN KEY (SavingsAccount2ID) REFERENCES SavingsAccount(SavingsAccountID),
+        CONSTRAINT FK3_HL FOREIGN KEY (PropertyID) REFERENCES Property(PropertyID),
+        CONSTRAINT FK4_HL FOREIGN KEY (StaffID) REFERENCES Staff(StaffID),
+        CHECK (HomeloanLimit>propertyvalue) 
+	); 
+
+CREATE TABLE HomeLoanAccount
+	(
+		HomeLoanAccountID integer,
+        CustomerID Integer,
+        HomeloanID integer,
+        CONSTRAINT PK_HLA PRIMARY KEY (HomeLoanAccountID),
+		CONSTRAINT FK1_HLA FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+        CONSTRAINT FK2_HLA FOREIGN KEY (HomeLoanID) REFERENCES HomeLoans(HomeloanID)
+	); 
+    
+Create TABLE HomeloanType
+	(
+		HomeloantypeID integer,
+        HLtype varchar(30),
+		CONSTRAINT PK_HLT PRIMARY KEY (HomeLoanTypeID)
+    );
+
+
+Insert into Customer(CustomerID,CustomerName,CustomerAnnualIncome) values (1,"John Smith",70000.00);
+Insert into Customer(CustomerID,CustomerName,CustomerAnnualIncome) values (2,"Jane Matthews",65000.00);
+Insert into Customer(CustomerID,CustomerName,CustomerAnnualIncome) values (3,"Albert Park",90000.00);
+Insert into Customer(CustomerID,CustomerName,CustomerAnnualIncome) values (4,"James Mackeroy",50000.00);
+Insert into Customer(CustomerID,CustomerName,CustomerAnnualIncome) values (5,"Sally Acorn",45000.00);
+Insert into Customer(CustomerID,CustomerName,CustomerAnnualIncome) values (6,"Molly Tails",64000.00);
+
+Insert into Staff(StaffID,StaffName) values (1,"Mack Anderson");
+Insert into Staff(StaffID,StaffName) values (2,"Ali Baba");
+Insert into Staff(StaffID,StaffName) values (3,"Matt Light");
+Insert into Staff(StaffID,StaffName) values (4,"Boruto Kawosaki");
+Insert into Staff(StaffID,StaffName) values (5,"Jim Beam");
+Insert into Staff(StaffID,StaffName) values (6,"Homer Simpson");
+
+Insert into PropertyStatus(PropertyStatusID,PropertyStatus) values (1,"Sold");
+Insert into PropertyStatus(PropertyStatusID,PropertyStatus) values (2,"Unsold");
+
+Insert into Homeloantype(homeloantypeID,hltype) values (1,"Single");
+Insert into Homeloantype(homeloantypeID,hltype) values (2,"Joint");
+
+Insert into State(StateID,State) values (1,"CAN");
+Insert into State(StateID,State) values (2,"VIC");
+Insert into State(StateID,State) values (3,"NSW");
+Insert into State(StateID,State) values (4,"ADL");
+Insert into State(StateID,State) values (5,"QNL");
+Insert into State(StateID,State) values (6,"NTY");
+Insert into State(StateID,State) values (7,"WAU");
+Insert into State(StateID,State) values (8,"TAS");
+
+Insert into Suburb(suburbid,suburb) values (3000,"Melbourne");
+Insert into Suburb(suburbid,suburb) values (3064,"Craigieburne");
+Insert into Suburb(suburbid,suburb) values (3072,"Roxburg");
+Insert into Suburb(suburbid,suburb) values (3071,"Greenvale");
+Insert into Suburb(suburbid,suburb) values (3044,"Epping");
+
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (1,"36 Riversbank Street",3000,1,500000.00,null,2);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (2,"36 Riversbank Street",3000,1,500000.00,null,2);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (3,"36 Riversbank Street",3000,1,700000.00,null,1);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (4,"36 Riversbank Street",3064,1,500000.00,null,1);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (5,"36 Riversbank Street",3000,1,500000.00,null,2);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (6,"36 Riversbank Street",3064,1,700000.00,null,1);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (7,"36 Riversbank Street",3072,1,500000.00,null,1);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (8,"36 Riversbank Street",3000,1,500000.00,null,2);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (9,"36 Riversbank Street",3072,1,700000.00,null,1);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (10,"36 Riversbank Street",3071,1,500000.00,null,1);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (11,"36 Riversbank Street",3000,1,500000.00,null,2);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (12,"36 Riversbank Street",3071,1,700000.00,null,1);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (13,"36 Riversbank Street",3044,1,500000.00,null,1);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (14,"36 Riversbank Street",3000,1,500000.00,null,2);
+Insert into Property(PropertyID,Address,SuburbID,StateID,Value,AverageValue,PropertyStatusID) values (15,"36 Riversbank Street",3044,1,700000.00,null,1);
+UPDATE property p JOIN(select SuburbID, avg(value) as avg from property WHERE property.propertystatusID = 1 GROUP BY suburbID) u ON p.suburbid = u.suburbid SET p.averagevalue = u.AVG;
+
+Insert into SavingsAccount(savingsaccountid,customerID,AccountAmount) values (1,1,60000.00);
+Insert into SavingsAccount(savingsaccountid,customerID,AccountAmount) values (2,2,40000.00);
+Insert into SavingsAccount(savingsaccountid,customerID,AccountAmount) values (3,3,60000.00);
+Insert into SavingsAccount(savingsaccountid,customerID,AccountAmount) values (4,4,40000.00);
+Insert into SavingsAccount(savingsaccountid,customerID,AccountAmount) values (5,5,60000.00);
+Insert into SavingsAccount(savingsaccountid,customerID,AccountAmount) values (6,6,40000.00);
+
+Insert into homeloans(HomeLoanID,HomeloantYPEid,CustomerID,Customer2ID,SavingsAccountID,SavingsAccount2ID,SavingsAmount,Savingsamount2,annualincome,annualincome2,PropertyID,PropertyValue,HomeLoanLimit,StaffID) values (1,2,1,2,1,2,null,null,null,null,1,null,null,1);
+Insert into homeloans(HomeLoanID,HomeloantYPEid,CustomerID,Customer2ID,SavingsAccountID,SavingsAccount2ID,SavingsAmount,Savingsamount2,annualincome,annualincome2,PropertyID,PropertyValue,HomeLoanLimit,StaffID) values (2,1,3,null,3,null,null,null,null,null,5,null,null,3);
+Insert into homeloans(HomeLoanID,HomeloantYPEid,CustomerID,Customer2ID,SavingsAccountID,SavingsAccount2ID,SavingsAmount,Savingsamount2,annualincome,annualincome2,PropertyID,PropertyValue,HomeLoanLimit,StaffID) values (3,1,4,null,4,null,null,null,null,null,11,null,null,3);
+UPDATE homeloans h , savingsaccount s SET h.savingsamount = s.accountamount WHERE h.savingsaccountID = s.savingsaccountID;
+UPDATE homeloans h , customer c SET h.annualincome = c.customerannualincome WHERE h.customerID = c.customerID;
+UPDATE homeloans h , savingsaccount s SET h.savingsamount2 = s.accountamount WHERE h.savingsaccount2ID = s.savingsaccountID;
+UPDATE homeloans h , customer c SET h.annualincome2 = c.customerannualincome WHERE h.customer2ID = c.customerID;
+UPDATE homeloans h , property p SET h.propertyvalue = p.averagevalue WHERE p.propertyID = h.propertyid;
+UPDATE homeloans h SET h.homeloanlimit = (h.annualincome*10)+(h.annualincome2*10)+(h.propertyvalue*0.65)+h.SavingsAmount+h.savingsamount2 WHERE h.homeloantypeid=2;
+UPDATE homeloans h SET h.homeloanlimit = (h.annualincome*10)+(h.propertyvalue*0.65)+h.SavingsAmount Where h.homeloantypeID=1;
+
+Insert into homeloanaccount(homeloanaccountID,customerID,homeloanID) values (1,1,1);
+Insert into homeloanaccount(homeloanaccountID,customerID,homeloanID) values (2,3,2);
+Insert into homeloanaccount(homeloanaccountID,customerID,homeloanID) values (3,4,3);
+
+select * from homeloans;
